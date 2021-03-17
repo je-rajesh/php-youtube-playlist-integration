@@ -4,6 +4,9 @@ error_reporting(E_ALL & E_NOTICE);
 
 $users = ['AIzaSyDUF3v8nCibiEEEL3677lSfjPMKWMNdPuQ'];
 
+$authenticated = false;
+
+
 function response($data, $status, $message)
 {
     $array_data = ['data' => $data, 'status' => $status, 'message' => $message];
@@ -19,8 +22,8 @@ if ($_POST['request_type'] == 'get_playlists') {
     $array_data = [];
     $authenticated = false;
 
-    if (in_array($yt_id, $users)) {
-        $authenticated = true;
+    if (in_array($yt_id, $users) || $_SESSION['user'] != '') {
+        $GLOBALS['authenticated'] = true;
         $_SESSION['user'] = $yt_id;
     }
 
