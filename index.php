@@ -32,8 +32,14 @@
         </div>
 
         <div v-if="show_table">
-            <div class="row mt-5">
+            <div class="row mt-5 justify-content-between mr-0">
                 <h3 class="ml-3">Playlist</h3>
+                <form>
+                    <div class="form-group row mr-0">
+                        <label for="add_playlist">Create Playlist</label>
+                        <input type="text" v-model="add_playlist" id="add_playlist" class="form-control">
+                    </div>
+                </form>
             </div>
             <div>
                 <table class="table table-bordered">
@@ -56,8 +62,8 @@
                             </td>
                             <td>{{ item.videoCount }}</td>
                             <td>
-                                <button class="btn btn-secondary" @click="refresh_item(item)"> <i class="fas fa-sync"></i></button>
-                                <button class="btn btn-danger" @click="delete_item(item)"> <i class="fas fa-trash"></i></button>
+                                <button class="btn btn-secondary" @click="refresh_item(item, id)"> <i class="fas fa-sync" :class="{ 'fa-spin': refreshing_id == id }"></i></button>
+                                <button class="btn btn-danger" @click="confirm(item, id)"> <i class="fas fa-trash"></i></button>
                             </td>
                         </tr>
                     </tbody>
@@ -81,6 +87,9 @@
                     playlists: [],
                     show_table: false,
                     alert_message: '',
+                    add_playlist: '',
+                    refreshing_id: NaN,
+                    deleting_id: NaN,
                 };
             },
             methods: {
@@ -98,6 +107,7 @@
 
                             if (response.data.status == 200) {
                                 self.playlists = response.data.data;
+                                
                                 self.show_table = true;
                             } else {
                                 self.alert_message = response.data.message;
@@ -110,25 +120,33 @@
                         });
                 },
 
-                refresh_item(item) {
+                refresh_item(item, id) {
                     var formdata = new FormData();
-                    var self =  this;
+                    var self = this;
+                    self.refreshing_id = id;
 
                     formdata.append('request_type', 'refresh_playlist');
                     formdata.append('playlist_id', item.playlistId);
 
+                    // self.$set(self.playlists[id], 'refreshing', true);
+
                     axios.post("/request.php", formdata)
                         .then(function(response) {
                             console.log(response.data);
-                            self.fetch();
-                            // self.playlists = response.data.data;
-                            // self.fetch();
+                            let b = response.data.data;
+
+                            self.refreshing_id = NaN;
+                            self.$set(self.playlists, id, response.data.data);
+
                         })
                         .catch(function(response) {
+                            // self.$set(self.playlists[id], 'refreshing', false);
+                            self.refreshing_id = NaN;
+                            alert('error occured.');
                             console.log(response);
                         });
                 },
-                delete_item(item) {
+                delete_item(item, id) {
                     var self = this;
                     var formdata = new FormData();
 
@@ -137,12 +155,16 @@
 
                     axios.post('/request.php', formdata)
                         .then(function(response) {
-                            self.playlists = response.data.data;
+                            // self.playlists = response.data.data;
+                            self.playlists.splice(id, 1);
                             console.log(response.data.data);
                         })
                         .catch(function(response) {
                             console.log(response);
                         })
+                },
+                confirm(item) {
+                    if (confirm('Do you really want to delete it?')) this.delete_item(item);
                 }
             }
         });
