@@ -34,10 +34,11 @@
         <div v-if="show_table">
             <div class="row mt-5 justify-content-between mr-0">
                 <h3 class="ml-3">Playlist</h3>
-                <form>
-                    <div class="form-group row mr-0">
-                        <label for="add_playlist">Create Playlist</label>
+                <form class="form form-inline" @submit.prevent="create">
+                    <div class="form-group row mr-0 mb-3">
+                        <label for="add_playlist" class="form-label mr-3">Create Playlist</label>
                         <input type="text" v-model="add_playlist" id="add_playlist" class="form-control">
+                        <button class="btn btn-success ml-3">Add</button>
                     </div>
                 </form>
             </div>
@@ -107,7 +108,7 @@
 
                             if (response.data.status == 200) {
                                 self.playlists = response.data.data;
-                                
+
                                 self.show_table = true;
                             } else {
                                 self.alert_message = response.data.message;
@@ -165,6 +166,39 @@
                 },
                 confirm(item) {
                     if (confirm('Do you really want to delete it?')) this.delete_item(item);
+                },
+
+                create() {
+                    var self = this;
+
+                    var formdata = new FormData();
+
+                    formdata.append('request_type', 'create_playlist');
+                    formdata.append('playlist_id', self.add_playlist);
+
+                    axios.post('/request.php', formdata)
+                        .then(function(response) {
+
+                            // first check for success 201(created) response
+                            if (response.data.status == 201) {
+                                self.playlists.splice(0, 0, response.data.data);
+                                alert('playlist added');
+                            }
+
+                            // else check for 204 status 
+                            else if (response.data.status == 204) {
+                                alert('playlist already exists');
+                            }
+                            // else check for other error 
+                            else {
+                                console.log(response.data);
+                                alert(response.data.message);
+                            }
+                        })
+                        .catch(function(response) {
+                            console.log(response.data);
+                            alert(response.data.message);
+                        });
                 }
             }
         });

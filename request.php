@@ -126,24 +126,73 @@ if ($_POST['request_type'] == 'refresh_playlist') {
 
             echo response([], 404, 'playlist not found');
 
-
-            // $extra = array(
-            //     'playlistId' => $pid,
-            //     'title' => $pList['items'][0]['snippet']['title'],
-            //     'imgurl' => $pList['items'][0]['snippet']['thumbnails']['high']['url'],
-            //     'videoCount' => sizeof($d1)
-            // );
-            // $array_data[] = $extra;
-
-            // $final_data = json_encode(array_values($array_data), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-            // file_put_contents('playlists.json', $final_data);
-
-
-            // echo response($array_data, 200, 'database updated1');
-            // exit;
-            // }
-
             exit;
+        }
+    } catch (Throwable $th) {
+        echo response($th->getTrace(), $th->getCode(), $th->getMessage());
+    }
+}
+
+/**
+ * function to create a playlist
+ */
+
+$pid = '';
+
+if ($_POST['request_type'] == 'create_playlist') {
+
+    error_reporting(E_ALL & ~E_NOTICE);
+
+    include('./functions.php');
+
+    $nextpage = '';
+
+    $GLOBALS['pid'] = $_POST['playlist_id'];
+
+    try {
+
+
+        $d1 = fetch_list1($nextpage, $arr_data);
+        //   header('Content-Type: application/json');
+        $someJSON = json_encode($d1, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        // file_put_contents('jsonFile1.json', $someJSON);
+        file_put_contents($pid . '.json', $someJSON);
+        // echo '<br><br>'.$someJSON;
+
+        if ($d1) {
+            $ifPid = null;
+            if (file_exists('playlists.json')) {
+                $current_data = file_get_contents('playlists.json');
+                $array_data = json_decode($current_data, true);
+                //  print_r ($array_data);
+                $ifPid = strval(array_search($pid, array_column($array_data, 'playlistId')));
+                // print "<br>" . $ifPid . " :::::::::::<br>";
+                if ($ifPid != null) {
+                    // if(in_array($pid, $array_data, true)){
+                    // print '<br><br><b>Play List already exists</b>';
+
+                    echo response([], 204, 'playlist already exists.');
+
+                    exit;
+                }
+            }
+            $pListUrl = "https://www.googleapis.com/youtube/v3/playlists?part=snippet&id=" . $pid . "&key=" . $GLOBALS['yt_api'];
+            $pList = json_decode(file_get_contents($pListUrl), true);
+            // $decoded_data = json_decode($data1, true);
+
+            $extra = array(
+                'playlistId' => $pid,
+                'title' => $pList['items'][0]['snippet']['title'],
+                'imgurl' => $pList['items'][0]['snippet']['thumbnails']['high']['url'],
+                'videoCount' => sizeof($d1)
+            );
+            // print_r($array_data);
+            $array_data[] = $extra;
+            $final_data = json_encode($array_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            file_put_contents('playlists.json', $final_data);
+            echo response($extra, 201, 'playlist created');
+        } else {
+            echo response([], 404, 'playlist not found or empty');
         }
     } catch (Throwable $th) {
         echo response($th->getTrace(), $th->getCode(), $th->getMessage());
