@@ -2,7 +2,7 @@
 
 error_reporting(E_ALL & E_NOTICE);
 
-$users = ['apple', 'ball', 'cat', 'dog'];
+$users = ['AIzaSyDUF3v8nCibiEEEL3677lSfjPMKWMNdPuQ'];
 
 function response($data, $status, $message)
 {
@@ -21,6 +21,7 @@ if ($_POST['request_type'] == 'get_playlists') {
 
     if (in_array($yt_id, $users)) {
         $authenticated = true;
+        $_SESSION['user'] = $yt_id;
     }
 
     if (!file_exists('playlists.json')) echo response([], 404, 'playlist empty');
