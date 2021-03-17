@@ -64,4 +64,17 @@ function fetch_list1($np, $arr_data)
     return $arr_data;
 }
 
-?>
+$USERS = ['AIzaSyDUF3v8nCibiEEEL3677lSfjPMKWMNdPuQ'];
+
+function authenticate($user_id)
+{
+    if (in_array($user_id, $GLOBALS['USERS'])) {
+
+        $_SESSION['user'] = $user_id;
+
+        return true;
+    } else
+        return false;
+}
+
+

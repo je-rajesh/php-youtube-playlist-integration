@@ -6,12 +6,31 @@ $users = ['AIzaSyDUF3v8nCibiEEEL3677lSfjPMKWMNdPuQ'];
 
 $authenticated = false;
 
-
 function response($data, $status, $message)
 {
     $array_data = ['data' => $data, 'status' => $status, 'message' => $message];
     return json_encode($array_data);
 }
+
+
+if ($_POST['request_type'] == 'login') {
+    $id = $_POST['yt_id'];
+
+    if (in_array($id, $GLOBALS['users'])) {
+        $_SESSION['user'] = $id;
+        echo response([], 200, 'authentication successfull');
+    } else {
+        echo response([], 401, 'user not found');
+    }
+    exit;
+}
+
+
+if (is_null($_POST['yt_id']) or !in_array($_POST['yt_id'], $GLOBALS['users'])) {
+    echo response([], 401, 'user doesn\'t exist');
+    exit;
+}
+
 
 /**
  * function to get playlist.
@@ -20,25 +39,16 @@ if ($_POST['request_type'] == 'get_playlists') {
     $yt_id = $_POST['yt_id'];
 
     $array_data = [];
-    $authenticated = false;
-
-    if (in_array($yt_id, $users) || $_SESSION['user'] != '') {
-        $GLOBALS['authenticated'] = true;
-        $_SESSION['user'] = $yt_id;
-    }
 
     if (!file_exists('playlists.json')) echo response([], 404, 'playlist empty');
 
-    if ($authenticated) {
-        $playlists = file_get_contents('playlists.json');
-        $array_data = json_decode($playlists);
+    $playlists = file_get_contents('playlists.json');
+    $array_data = json_decode($playlists);
 
-        echo response($array_data, 200, 'success');
-    } else {
-        echo response([], 403, 'user not found');
-    }
+    echo response($array_data, 200, 'success');
 
-    return;
+    // return;
+    exit;
 }
 /**
  *  function to delete a playlist from database. 
@@ -71,8 +81,7 @@ if ($_POST['request_type'] == 'delete_playlist') {
     echo response($new_data, 200, 'list deleted');
 
     return;
-}
-
+} 
 /**
  * function to refresh playlist. 
  */

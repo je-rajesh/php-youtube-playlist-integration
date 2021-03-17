@@ -21,12 +21,18 @@
         "playlistId": "PLkF7RYTIPWdeyNK9u_IJymUs_FhKn8QCq",
         "title": "Best of Pankaj Tripathi",
         "imgurl": "https://i.ytimg.com/vi/LtzrqnV3e18/hqdefault.jpg",
-        "videoCount": 16
+        "videoCount": 1
     },
     {
         "playlistId": "PLkF7RYTIPWdfb0LZGvFA3ovOmtWcYg1lc",
         "title": "Tribhanga - Tedhi Medhi Crazy",
         "imgurl": "https://i.ytimg.com/vi/Yi7CS17VxRQ/hqdefault.jpg",
         "videoCount": 9
+    },
+    {
+        "playlistId": "PLkF7RYTIPWddRqsED7Qr4rHnzm3kjGoYe",
+        "title": "Enola Holmes",
+        "imgurl": "https://i.ytimg.com/vi/Ht-VQpDm3JU/hqdefault.jpg",
+        "videoCount": 5
     }
 ]

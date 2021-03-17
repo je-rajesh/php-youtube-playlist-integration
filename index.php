@@ -18,7 +18,7 @@
 <body>
     <!-- form -->
     <div class="container mt-5" id="root">
-        <form action="/request.php" method="post" ref="form" @submit.prevent="fetch">
+        <form action="/request.php" method="post" ref="form" @submit.prevent="login">
             <div class="form-group">
                 <label for="form-label">Input Youtube Id</label>
                 <input type="text" class="form-control" v-model="yt_id">
@@ -85,6 +85,7 @@
             data() {
                 return {
                     yt_id: 'apple',
+                    authenticated: false,
                     playlists: [],
                     show_table: false,
                     alert_message: '',
@@ -94,9 +95,36 @@
                 };
             },
             methods: {
+                login() {
+                    var formdata = new FormData();
+                    var self = this;
+                    formdata.append('yt_id', self.yt_id);
+                    formdata.append('request_type', 'login');
+
+                    axios.post('/request.php', formdata)
+                        .then(function(response) {
+                            // console.log(response.data);
+                            // self.authenticated = true;
+                            if (response.data.status == 200) {
+                                alert('user logged in');
+                                self.authenticated = true;
+                                self.fetch();
+                            } else if (response.data.status == 401) {
+                                alert('unauthenticated');
+                                self.show_table = false;
+                                console.log(response.data);
+                            } else {
+                                alert(response.data.message);
+                            }
+                        })
+                        .catch(function(response) {
+                            console.log(response);
+                            alert('error occured!');
+                        });
+                },
                 fetch() {
                     var self = this;
-                    console.log(self.request_type);
+                    // console.log(self.request_type);
 
                     var formdata = new FormData();
                     formdata.append('yt_id', self.yt_id);
@@ -129,6 +157,7 @@
                     formdata.append('request_type', 'refresh_playlist');
                     formdata.append('playlist_id', item.playlistId);
 
+                    formdata.append('yt_id', self.yt_id);
                     // self.$set(self.playlists[id], 'refreshing', true);
 
                     axios.post("/request.php", formdata)
@@ -151,6 +180,7 @@
                     var self = this;
                     var formdata = new FormData();
 
+                    formdata.append('yt_id', self.yt_id);
                     formdata.append('request_type', 'delete_playlist');
                     formdata.append('playlist_id', item.playlistId);
 
@@ -173,6 +203,7 @@
 
                     var formdata = new FormData();
 
+                    formdata.append('yt_id', self.yt_id);
                     formdata.append('request_type', 'create_playlist');
                     formdata.append('playlist_id', self.add_playlist);
 
