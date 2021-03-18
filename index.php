@@ -84,7 +84,7 @@
 
             data() {
                 return {
-                    yt_id: 'apple',
+                    yt_id: 'AIzaSyDUF3v8nCibiEEEL3677lSfjPMKWMNdPuQ',
                     authenticated: false,
                     playlists: [],
                     show_table: false,
@@ -101,7 +101,7 @@
                     formdata.append('yt_id', self.yt_id);
                     formdata.append('request_type', 'login');
 
-                    axios.post('/request.php', formdata)
+                    axios.post('./request.php', formdata)
                         .then(function(response) {
                             // console.log(response.data);
                             // self.authenticated = true;
@@ -130,7 +130,7 @@
                     formdata.append('yt_id', self.yt_id);
                     formdata.append('request_type', 'get_playlists');
 
-                    axios.post('/request.php', formdata)
+                    axios.post('./request.php', formdata)
                         .then(function(response) {
                             console.log(response.data);
 
@@ -160,7 +160,7 @@
                     formdata.append('yt_id', self.yt_id);
                     // self.$set(self.playlists[id], 'refreshing', true);
 
-                    axios.post("/request.php", formdata)
+                    axios.post("./request.php", formdata)
                         .then(function(response) {
                             console.log(response.data);
                             let b = response.data.data;
