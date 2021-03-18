@@ -178,7 +178,7 @@ if ($_POST['request_type'] == 'create_playlist') {
                 $current_data = file_get_contents('playlists.json');
                 $array_data = json_decode($current_data, true);
                 //  print_r ($array_data);
-                $ifPid = strval(array_search($pid, array_column($array_data, 'playlistId')));
+                $ifPid = strval(array_search($pid, array_column($array_data ?? [], 'playlistId')));
                 // print "<br>" . $ifPid . " :::::::::::<br>";
                 if ($ifPid != null) {
                     // if(in_array($pid, $array_data, true)){

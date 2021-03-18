@@ -31,17 +31,17 @@
             <h3>{{ alert_message }}</h3>
         </div>
 
+        <div class="row mt-5 justify-content-between mr-0" v-if="authenticated  ">
+            <h3 class="ml-3">Playlist</h3>
+            <form class="form form-inline" @submit.prevent="create">
+                <div class="form-group row mr-0 mb-3">
+                    <label for="add_playlist" class="form-label mr-3">Create Playlist</label>
+                    <input type="text" v-model="add_playlist" id="add_playlist" class="form-control">
+                    <button class="btn btn-success ml-3">Add</button>
+                </div>
+            </form>
+        </div>
         <div v-if="show_table">
-            <div class="row mt-5 justify-content-between mr-0">
-                <h3 class="ml-3">Playlist</h3>
-                <form class="form form-inline" @submit.prevent="create">
-                    <div class="form-group row mr-0 mb-3">
-                        <label for="add_playlist" class="form-label mr-3">Create Playlist</label>
-                        <input type="text" v-model="add_playlist" id="add_playlist" class="form-control">
-                        <button class="btn btn-success ml-3">Add</button>
-                    </div>
-                </form>
-            </div>
             <div>
                 <table class="table table-bordered">
                     <thead>
@@ -135,7 +135,7 @@
                             console.log(response.data);
 
                             if (response.data.status == 200) {
-                                self.playlists = response.data.data;
+                                self.playlists = response.data.data == null ? [] : response.data.data;
 
                                 self.show_table = true;
                             } else {
@@ -184,7 +184,7 @@
                     formdata.append('request_type', 'delete_playlist');
                     formdata.append('playlist_id', item.playlistId);
 
-                    axios.post('/request.php', formdata)
+                    axios.post('./request.php', formdata)
                         .then(function(response) {
                             // self.playlists = response.data.data;
                             self.playlists.splice(id, 1);
@@ -207,12 +207,16 @@
                     formdata.append('request_type', 'create_playlist');
                     formdata.append('playlist_id', self.add_playlist);
 
-                    axios.post('/request.php', formdata)
+                    axios.post('./request.php', formdata)
                         .then(function(response) {
 
                             // first check for success 201(created) response
                             if (response.data.status == 201) {
-                                self.playlists.splice(0, 0, response.data.data);
+                                if (self.playlists.length != 0)
+                                    self.playlists.splice(0, 0, response.data.data);
+                                else {
+                                    self.playlists.push(response.data.data);
+                                }
                                 alert('playlist added');
                             }
 
@@ -227,8 +231,8 @@
                             }
                         })
                         .catch(function(response) {
-                            console.log(response.data);
-                            alert(response.data.message);
+                            console.log(response);
+                            // alert(response.data.message);
                         });
                 }
             }
