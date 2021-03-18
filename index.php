@@ -31,7 +31,7 @@
             <h3>{{ alert_message }}</h3>
         </div>
 
-        <div class="row mt-5 justify-content-between mr-0" v-if="authenticated  ">
+        <div class="row mt-5 justify-content-between mr-0" v-if="authenticated">
             <h3 class="ml-3">Playlist</h3>
             <form class="form form-inline" @submit.prevent="create">
                 <div class="form-group row mr-0 mb-3">
