@@ -37,7 +37,9 @@
                 <div class="form-group row mr-0 mb-3">
                     <label for="add_playlist" class="form-label mr-3">Create Playlist</label>
                     <input type="text" v-model="add_playlist" id="add_playlist" class="form-control">
-                    <button class="btn btn-success ml-3">Add</button>
+                    <button class="btn btn-success ml-3" :disabled="creating_playlist">Add
+                        <i class="fas fa-spinner fa-spin" v-if="creating_playlist"></i>
+                    </button>
                 </div>
             </form>
         </div>
@@ -92,6 +94,7 @@
                     add_playlist: '',
                     refreshing_id: NaN,
                     deleting_id: NaN,
+                    creating_playlist: false,
                 };
             },
             methods: {
@@ -207,6 +210,7 @@
                     formdata.append('request_type', 'create_playlist');
                     formdata.append('playlist_id', self.add_playlist);
 
+                    self.creating_playlist = true;
                     axios.post('./request.php', formdata)
                         .then(function(response) {
 
@@ -229,11 +233,15 @@
                                 console.log(response.data);
                                 alert(response.data.message);
                             }
+
+                            self.creating_playlist = false;
                         })
                         .catch(function(response) {
                             console.log(response);
                             // alert(response.data.message);
+                            self.creating_playlist = false;
                         });
+                    self.add_playlist = '';
                 }
             }
         });

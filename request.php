@@ -78,6 +78,8 @@ if ($_POST['request_type'] == 'delete_playlist') {
     $d = json_encode(array_values($new_data),  JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     file_put_contents('playlists.json', $d);
 
+    unlink($playlistId.'.json');
+
     echo response($new_data, 200, 'list deleted');
 
     return;
@@ -175,7 +177,7 @@ if ($_POST['request_type'] == 'create_playlist') {
         if ($d1) {
             $ifPid = null;
             if (file_exists('playlists.json')) {
-                $current_data = file_get_contents('playlists.json');
+                $current_data = file_get_contents('playlists.json');    
                 $array_data = json_decode($current_data, true);
                 //  print_r ($array_data);
                 $ifPid = strval(array_search($pid, array_column($array_data ?? [], 'playlistId')));

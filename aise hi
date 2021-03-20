@@ -1,0 +1,15 @@
+1. verification mail,
+2. profile is compulsory filled for all users. 
+3. only word characters in developers. 
+multiform step 2 
+    com.<developer-name>.<appname>
+
+    redirect url: <developer-name> subdomain for every app the developer create. 
+    if avialable then he will be redirected to subdomain.appio.com othewise appio.com. 
+
+application moneytisation. 
+
+    app-id: 
+    banner-id: compulsory all 3
+
+link 
